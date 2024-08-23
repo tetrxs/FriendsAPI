@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 public class FriendInventory extends InventoryUtil {
@@ -101,8 +102,13 @@ public class FriendInventory extends InventoryUtil {
                 getInventoryPlayer().closeInventory();
             } else if (event.getCurrentItem().getType().equals(Material.GOLDEN_BOOTS)) {
                 CloudAPI.getInstance().getCloudPlayerManager().getCloudPlayer(UUID.fromString(playerUUID)).then(iCloudPlayer -> {
-                    CloudAPI.getInstance().getCloudPlayerManager().getCachedCloudPlayer(getInventoryPlayer().getUniqueId()).connect(iCloudPlayer.getConnectedServer());
-                    getInventoryPlayer().closeInventory();
+                    Bukkit.getScheduler().runTaskLater(FriendsAPI.getInstance(), new Runnable() {
+                        @Override
+                        public void run() {
+                            Objects.requireNonNull(CloudAPI.getInstance().getCloudPlayerManager().getCachedCloudPlayer(getInventoryPlayer().getUniqueId())).connect(Objects.requireNonNull(iCloudPlayer.getConnectedServer()));
+                            getInventoryPlayer().closeInventory();
+                        }
+                    },1);
                     return Unit.INSTANCE;
                 }).addFailureListener(throwable ->{
                     throwable.printStackTrace();
