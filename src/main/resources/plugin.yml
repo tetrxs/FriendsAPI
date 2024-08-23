@@ -1,0 +1,7 @@
+name: FriendsAPI
+version: '${project.version}'
+main: net.minetaria.friendsapi.FriendsAPI
+api-version: '1.21'
+
+commands:
+  friend:
