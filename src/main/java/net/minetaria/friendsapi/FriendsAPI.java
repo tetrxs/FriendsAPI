@@ -25,6 +25,9 @@ public final class FriendsAPI extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
+
+        //GAUNERCOOLS
+
         sqlUtil = new SQLUtil("jdbc:mysql://116.202.235.165:3306/FriendsAPI", "minetaria", "2S3jYDYC9rfLi4P7");
         try {
             sqlUtil.executeUpdate("CREATE TABLE IF NOT EXISTS `friendsAPI_playerData` (`uuid` VARCHAR(100) NOT NULL , `name` VARCHAR(100) NOT NULL , `online` INT NOT NULL , `server` VARCHAR(100) NOT NULL , `lastLogin` BIGINT NOT NULL ) ENGINE = InnoDB;");
