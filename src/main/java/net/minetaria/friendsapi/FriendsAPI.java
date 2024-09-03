@@ -1,7 +1,6 @@
 package net.minetaria.friendsapi;
 
 import de.gaunercools.languageapibukkit.mysql.LanguageAPI;
-import net.minetaria.friendsapi.commands.FriendCommand;
 import net.minetaria.friendsapi.inventories.FriendsInventory;
 import net.minetaria.friendsapi.listeners.PlayerJoinListener;
 import net.minetaria.friendsapi.utils.SQLUtil;
@@ -9,6 +8,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -44,9 +46,20 @@ public final class FriendsAPI extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
-        getCommand("friend").setExecutor(new FriendCommand());
-
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), this);
+    }
+
+    public static void executeBungeeCommand(Player player, String command){
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(b);
+        try {
+            out.writeUTF("bungeeCommandExecutionFriendsAPI");
+            out.writeUTF(command);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        player.sendPluginMessage(getInstance(), "BungeeCord", b.toByteArray());
     }
 
     //OPEN MENU

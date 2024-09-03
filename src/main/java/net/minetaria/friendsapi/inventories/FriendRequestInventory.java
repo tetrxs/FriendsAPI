@@ -52,13 +52,10 @@ public class FriendRequestInventory extends InventoryUtil {
     public void OnThisInventoryClicked(Player player, InventoryClickEvent event) {
         if (event.getCurrentItem() != null && event.getCurrentItem().hasItemMeta()) {
             if (event.getCurrentItem().getType().equals(Material.GREEN_STAINED_GLASS)) {
-                FriendsAPI.removeFriendRequest(senderUUID,targetUUID);
-                FriendsAPI.removeFriendRequest(targetUUID,senderUUID);
-                FriendsAPI.pairFriends(senderUUID,targetUUID);
+                FriendsAPI.executeBungeeCommand(getInventoryPlayer(),"/friend accept " + FriendsAPI.getNamefromUUID(UUID.fromString(senderUUID)));
                 getInventoryPlayer().closeInventory();
             } else if (event.getCurrentItem().getType().equals(Material.RED_STAINED_GLASS)) {
-                FriendsAPI.removeFriendRequest(senderUUID,targetUUID);
-                FriendsAPI.removeFriendRequest(targetUUID,senderUUID);
+                FriendsAPI.executeBungeeCommand(getInventoryPlayer(),"/friend decline " + FriendsAPI.getNamefromUUID(UUID.fromString(senderUUID)));
                 Bukkit.getScheduler().runTaskLater(FriendsAPI.getInstance(), new Runnable() {
                     @Override
                     public void run() {

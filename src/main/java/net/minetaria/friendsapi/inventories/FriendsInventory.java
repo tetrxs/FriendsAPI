@@ -47,31 +47,6 @@ public class FriendsInventory extends InventoryUtil {
             getInventory().setItem(i, new ItemUtil(Material.GRAY_STAINED_GLASS_PANE).setName("§7").setAmount(1).build());
         }
 
-        ItemStack arrowRightIs = SkullUtil.getCustomSkullFromURL("1a20d6ef126813066a2577ccc5df7102683f1af7c3e94e45ab9ad67edbb52");
-        ItemMeta arrowRightIm = arrowRightIs.getItemMeta();
-        int max = 1;
-        if (siteDisplayableItems.size() > 36) {
-            max = siteDisplayableItems.size()/36;
-        }
-        String temp = LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_arrowRight").replaceAll("%SITE%", String.valueOf(site)).replaceAll("%MAX%", String.valueOf(max));
-        arrowRightIm.setItemName(temp);
-        arrowRightIs.setItemMeta(arrowRightIm);
-        getInventory().setItem(53,arrowRightIs);
-
-        ItemStack arrowLeftIs = SkullUtil.getCustomSkullFromURL("656439c3f65e9fe41f2d8be47bf493f143acadfd5dbea86fea6dbe19e435ea");
-        ItemMeta arrowLeftIm = arrowLeftIs.getItemMeta();
-        String temp1 = LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_arrowLeft").replaceAll("%SITE%", String.valueOf(site)).replaceAll("%MAX%", String.valueOf(max));
-        arrowLeftIm.setItemName(temp1);
-        arrowLeftIs.setItemMeta(arrowLeftIm);
-        getInventory().setItem(45,arrowLeftIs);
-
-        ItemStack skullIs = SkullUtil.getPlayerSkull(getInventoryPlayer().getUniqueId());
-        ItemMeta skullIm = skullIs.getItemMeta();
-        skullIm.setItemName(LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"lobby_profileItem"));
-        skullIm.addEnchant(Enchantment.POWER,1,true);
-        skullIs.setItemMeta(skullIm);
-        getInventory().setItem(49, skullIs);
-
         switch (friendsMenuState) {
             case FRIENDS:
                 ItemStack addFriendIs = SkullUtil.getCustomSkullFromURL("5ff31431d64587ff6ef98c0675810681f8c13bf96f51d9cb07ed7852b2ffd1");
@@ -88,22 +63,29 @@ public class FriendsInventory extends InventoryUtil {
 
                 if (!friends.isEmpty()) {
                     for (String s:friends) {
-                        if (FriendsAPI.isOnline(UUID.fromString(s))) {
-                            ItemStack onlineFriendIs = SkullUtil.getPlayerSkull(UUID.fromString(s));
-                            ItemMeta onlineFriendIm = onlineFriendIs.getItemMeta();
-                            onlineFriendIm.setItemName("§a§l" + FriendsAPI.getNamefromUUID(UUID.fromString(s)));
-                            String lore1[] = LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_friendOnlineStatusLore").replaceAll("%STATUS%", "§aOnline").replaceAll("%SERVER%", "§e" + FriendsAPI.getServerName(UUID.fromString(s))).replaceAll("%LANGUAGE%", "§2" + LanguageAPI.getMySQLLanguage(s)).split(";");
-                            onlineFriendIm.setLore(Arrays.asList(lore1));
-                            onlineFriendIm.addEnchant(Enchantment.POWER,1,true);
-                            onlineFriendIs.setItemMeta(onlineFriendIm);
-                            siteDisplayableItems.add(onlineFriendIs);
-                        } else {
-                            long yourmilliseconds = FriendsAPI.getLastLogin(UUID.fromString(s));
-                            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
-                            Date resultdate = new Date(yourmilliseconds);
-                            String lore1[] = LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_friendOfflineStatusLore").replaceAll("%STATUS%", "§cOffline").replaceAll("%LASTLOGIN%", "§e" + sdf.format(resultdate)).split(";");
-                            ItemStack offlineFriendIs = new ItemUtil(Material.SKELETON_SKULL).setName("§7" + FriendsAPI.getNamefromUUID(UUID.fromString(s))).setLore(lore1).build();
-                            siteDisplayableItems.add(offlineFriendIs);
+                        if (s != null) {
+                            if (FriendsAPI.isOnline(UUID.fromString(s))) {
+                                ItemStack onlineFriendIs = SkullUtil.getPlayerSkull(UUID.fromString(s));
+                                ItemMeta onlineFriendIm = onlineFriendIs.getItemMeta();
+                                onlineFriendIm.setItemName("§a§l" + FriendsAPI.getNamefromUUID(UUID.fromString(s)));
+                                String lore1[] = LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_friendOnlineStatusLore").replaceAll("%STATUS%", "§aOnline").replaceAll("%SERVER%", "§e" + FriendsAPI.getServerName(UUID.fromString(s))).replaceAll("%LANGUAGE%", "§2" + LanguageAPI.getMySQLLanguage(s)).split(";");
+                                onlineFriendIm.setLore(Arrays.asList(lore1));
+                                onlineFriendIm.addEnchant(Enchantment.POWER,1,true);
+                                onlineFriendIs.setItemMeta(onlineFriendIm);
+                                siteDisplayableItems.add(onlineFriendIs);
+                            }
+                        }
+                    }
+                    for (String s:friends) {
+                        if (s != null) {
+                            if (!FriendsAPI.isOnline(UUID.fromString(s))) {
+                                long yourmilliseconds = FriendsAPI.getLastLogin(UUID.fromString(s));
+                                SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+                                Date resultdate = new Date(yourmilliseconds);
+                                String lore1[] = LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_friendOfflineStatusLore").replaceAll("%STATUS%", "§cOffline").replaceAll("%LASTLOGIN%", "§e" + sdf.format(resultdate)).split(";");
+                                ItemStack offlineFriendIs = new ItemUtil(Material.SKELETON_SKULL).setName("§7" + FriendsAPI.getNamefromUUID(UUID.fromString(s))).setLore(lore1).build();
+                                siteDisplayableItems.add(offlineFriendIs);
+                            }
                         }
                     }
                     for (int i=9;i<45;i++) {
@@ -111,6 +93,29 @@ public class FriendsInventory extends InventoryUtil {
                             if (siteDisplayableItems.get(((site-1)*36)+(i-9)) != null) getInventory().setItem(i,siteDisplayableItems.get(((site-1)*36)+(i-9)));
                         }
                     }
+
+                    ItemStack arrowRightIs = SkullUtil.getCustomSkullFromURL("1a20d6ef126813066a2577ccc5df7102683f1af7c3e94e45ab9ad67edbb52");
+                    ItemMeta arrowRightIm = arrowRightIs.getItemMeta();
+                    int max = 1;
+                    if (siteDisplayableItems.size() > 36) {
+                        max = siteDisplayableItems.size()/36;
+                    }
+                    arrowRightIm.setItemName(LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_arrowRight").replaceAll("%SITE%", String.valueOf(site)).replaceAll("%MAX%", String.valueOf(max)));
+                    arrowRightIs.setItemMeta(arrowRightIm);
+                    getInventory().setItem(53,arrowRightIs);
+
+                    ItemStack arrowLeftIs = SkullUtil.getCustomSkullFromURL("656439c3f65e9fe41f2d8be47bf493f143acadfd5dbea86fea6dbe19e435ea");
+                    ItemMeta arrowLeftIm = arrowLeftIs.getItemMeta();
+                    arrowLeftIm.setItemName(LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_arrowLeft").replaceAll("%SITE%", String.valueOf(site)).replaceAll("%MAX%", String.valueOf(max)));
+                    arrowLeftIs.setItemMeta(arrowLeftIm);
+                    getInventory().setItem(45,arrowLeftIs);
+
+                    ItemStack skullIs = SkullUtil.getPlayerSkull(getInventoryPlayer().getUniqueId());
+                    ItemMeta skullIm = skullIs.getItemMeta();
+                    skullIm.setItemName(LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"lobby_profileItem"));
+                    skullIm.addEnchant(Enchantment.POWER,1,true);
+                    skullIs.setItemMeta(skullIm);
+                    getInventory().setItem(49, skullIs);
                 }
                 break;
             case REQUESTS:
@@ -132,6 +137,21 @@ public class FriendsInventory extends InventoryUtil {
                             getInventory().setItem(i,siteDisplayableItems.get(((site-1)*36)+(i-9)));
                         }
                     }
+                    ItemStack arrowRightIs = SkullUtil.getCustomSkullFromURL("1a20d6ef126813066a2577ccc5df7102683f1af7c3e94e45ab9ad67edbb52");
+                    ItemMeta arrowRightIm = arrowRightIs.getItemMeta();
+                    int max = 1;
+                    if (siteDisplayableItems.size() > 36) {
+                        max = siteDisplayableItems.size()/36;
+                    }
+                    arrowRightIm.setItemName(LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_arrowRight").replaceAll("%SITE%", String.valueOf(site)).replaceAll("%MAX%", String.valueOf(max)));
+                    arrowRightIs.setItemMeta(arrowRightIm);
+                    getInventory().setItem(53,arrowRightIs);
+
+                    ItemStack arrowLeftIs = SkullUtil.getCustomSkullFromURL("656439c3f65e9fe41f2d8be47bf493f143acadfd5dbea86fea6dbe19e435ea");
+                    ItemMeta arrowLeftIm = arrowLeftIs.getItemMeta();
+                    arrowLeftIm.setItemName(LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_arrowLeft").replaceAll("%SITE%", String.valueOf(site)).replaceAll("%MAX%", String.valueOf(max)));
+                    arrowLeftIs.setItemMeta(arrowLeftIm);
+                    getInventory().setItem(45,arrowLeftIs);
                 }
                 break;
             case SETTINGS:
@@ -169,42 +189,26 @@ public class FriendsInventory extends InventoryUtil {
                             public void run() {
                                 new AnvilGUI.Builder()
                                         .onClick((slot, stateSnapshot) -> {
-                                            if(slot != AnvilGUI.Slot.OUTPUT) {
-                                                return Collections.emptyList();
-                                            }
-                                            String targetUUID = null;
-                                            try {
-                                                ResultSet rs = FriendsAPI.getInstance().getSqlUtil().executeQuery("SELECT * FROM `friendsAPI_playerData` WHERE `name` = '" + stateSnapshot.getText() + "';");
-                                                if (rs.next()) {
-                                                    targetUUID = rs.getString("uuid");
-                                                }
-                                                rs.close();
-                                            } catch (SQLException e) {
-                                                throw new RuntimeException(e);
-                                            }
-                                            if(targetUUID != null) {
-                                                if (!FriendsAPI.getFriends(getInventoryPlayer().getUniqueId().toString()).contains(targetUUID)) {
-                                                    if (!FriendsAPI.getFriendRequests(targetUUID).contains(getInventoryPlayer().getUniqueId().toString())) {
-                                                        if (!FriendsAPI.getFriendRequests(getInventoryPlayer().getUniqueId().toString()).contains(targetUUID)) {
-                                                            FriendsAPI.sendFriendRequest(getInventoryPlayer().getUniqueId().toString(),targetUUID);
-                                                            getInventoryPlayer().sendMessage(FriendsAPI.prefix + LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_addFriendMenu_playerAdd").replaceAll("%PLAYER%",stateSnapshot.getText()));
-                                                        } else {
-                                                            player.sendMessage(FriendsAPI.prefix + LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_addFriendMenu_playerAlreadyRequested"));
-                                                        }
-                                                    } else {
-                                                        player.sendMessage(FriendsAPI.prefix + LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_addFriendMenu_playerAlreadyRequested"));
+                                            if(slot == AnvilGUI.Slot.INPUT_RIGHT) {
+                                                FriendsAPI.executeBungeeCommand(getInventoryPlayer(),"/friend add " + stateSnapshot.getText());
+                                                return Arrays.asList(AnvilGUI.ResponseAction.close());
+                                            } else if (slot == AnvilGUI.Slot.INPUT_LEFT) {
+                                                Bukkit.getScheduler().runTaskLater(FriendsAPI.getInstance(), new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        new FriendsInventory(LanguageAPI.getTranslatedMessage(player,"friends_friendsMenu"),54).openInventory(player);
                                                     }
-                                                } else {
-                                                    getInventoryPlayer().sendMessage(FriendsAPI.prefix + LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_addFriendMenu_playerAlreadyFriend"));
-                                                }
+                                                },1);
                                                 return Arrays.asList(AnvilGUI.ResponseAction.close());
                                             } else {
-                                                getInventoryPlayer().sendMessage(FriendsAPI.prefix + LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_addFriendMenu_playerNotFound"));
-                                                return Arrays.asList(AnvilGUI.ResponseAction.close());
+                                                return Collections.emptyList();
                                             }
                                         })
                                         .title(LanguageAPI.getTranslatedMessage(player,"friends_friendsMenu_addFriendMenu"))
                                         .text("Name")
+                                        .itemOutput(new ItemUtil(Material.BARRIER).setName("§1").build())
+                                        .itemLeft(new ItemUtil(Material.RED_STAINED_GLASS_PANE).setName(LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_friendRemoveCancel")).build())
+                                        .itemRight(new ItemUtil(Material.GREEN_STAINED_GLASS_PANE).setName(LanguageAPI.getTranslatedMessage(getInventoryPlayer(),"friends_friendsMenu_friendRemoveConfirm")).build())
                                         .plugin(FriendsAPI.getInstance())
                                         .open(getInventoryPlayer());
                             }
@@ -225,6 +229,17 @@ public class FriendsInventory extends InventoryUtil {
                                 new FriendInventory("§a§l" + playerName,27,FriendsAPI.getUUIDfromName(playerName).toString()).openInventory(player);
                             }
                         },1);
+                    } else if (event.getRawSlot() == 45) {
+                        if (site > 1) {
+                            site--;
+                            initFriendsMenu();
+                        }
+                    } else if (event.getRawSlot() == 53) {
+                        int maxPage = (int) Math.ceil((double) siteDisplayableItems.size() / 36.0);
+                        if (site < maxPage) {
+                            site++;
+                            initFriendsMenu();
+                        }
                     }
                     break;
                 case REQUESTS:
@@ -241,23 +256,23 @@ public class FriendsInventory extends InventoryUtil {
                             }
                         },1);
                     } else if (event.getCurrentItem().getType().equals(Material.GREEN_STAINED_GLASS)) {
-                        ArrayList<String> friendRequests = FriendsAPI.getFriendRequests(getInventoryPlayer().getUniqueId().toString());
-                        if (!friendRequests.isEmpty()) {
-                            for (String s:friendRequests) {
-                                FriendsAPI.removeFriendRequest(s,getInventoryPlayer().getUniqueId().toString());
-                                FriendsAPI.pairFriends(getInventoryPlayer().getUniqueId().toString(),s);
-                            }
-                            initFriendsMenu();
-                            getInventoryPlayer().updateInventory();
-                        }
+                        FriendsAPI.executeBungeeCommand(getInventoryPlayer(),"/friend acceptAll");
+                        initFriendsMenu();
+                        getInventoryPlayer().updateInventory();
                     } else if (event.getCurrentItem().getType().equals(Material.RED_STAINED_GLASS)) {
-                        ArrayList<String> friendRequests = FriendsAPI.getFriendRequests(getInventoryPlayer().getUniqueId().toString());
-                        if (!friendRequests.isEmpty()) {
-                            for (String s:friendRequests) {
-                                FriendsAPI.removeFriendRequest(s,getInventoryPlayer().getUniqueId().toString());
-                            }
+                        FriendsAPI.executeBungeeCommand(getInventoryPlayer(),"/friend declineAll");
+                        initFriendsMenu();
+                        getInventoryPlayer().updateInventory();
+                    } else if (event.getRawSlot() == 45) {
+                        if (site > 1) {
+                            site--;
                             initFriendsMenu();
-                            getInventoryPlayer().updateInventory();
+                        }
+                    } else if (event.getRawSlot() == 53) {
+                        int maxPage = (int) Math.ceil((double) siteDisplayableItems.size() / 36.0);
+                        if (site < maxPage) {
+                            site++;
+                            initFriendsMenu();
                         }
                     }
                     break;

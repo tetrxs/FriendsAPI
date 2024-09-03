@@ -71,7 +71,7 @@ public class FriendRemoveInventory extends InventoryUtil {
                 },1);
                 getInventoryPlayer().closeInventory();
             } else if (event.getCurrentItem().getType().equals(Material.GREEN_STAINED_GLASS)) {
-                FriendsAPI.removeFriends(getInventoryPlayer().getUniqueId().toString(),removeUUID);
+                FriendsAPI.executeBungeeCommand(getInventoryPlayer(),"/friend remove " + FriendsAPI.getNamefromUUID(UUID.fromString(removeUUID)));
                 getInventoryPlayer().closeInventory();
             }
         }

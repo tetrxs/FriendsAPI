@@ -101,19 +101,8 @@ public class FriendInventory extends InventoryUtil {
                 },1);
                 getInventoryPlayer().closeInventory();
             } else if (event.getCurrentItem().getType().equals(Material.GOLDEN_BOOTS)) {
-                CloudAPI.getInstance().getCloudPlayerManager().getCloudPlayer(UUID.fromString(playerUUID)).then(iCloudPlayer -> {
-                    Bukkit.getScheduler().runTaskLater(FriendsAPI.getInstance(), new Runnable() {
-                        @Override
-                        public void run() {
-                            Objects.requireNonNull(CloudAPI.getInstance().getCloudPlayerManager().getCachedCloudPlayer(getInventoryPlayer().getUniqueId())).connect(Objects.requireNonNull(iCloudPlayer.getConnectedServer()));
-                            getInventoryPlayer().closeInventory();
-                        }
-                    },1);
-                    return Unit.INSTANCE;
-                }).addFailureListener(throwable ->{
-                    throwable.printStackTrace();
-                    return Unit.INSTANCE;
-                });
+                FriendsAPI.executeBungeeCommand(player,"/friend jump " + FriendsAPI.getNamefromUUID(UUID.fromString(playerUUID)));
+                getInventoryPlayer().closeInventory();
             }
         }
     }
